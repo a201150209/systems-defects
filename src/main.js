@@ -3,8 +3,6 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
 
-
-
 const CREATING_DATE = 'Дата создания';
 const SYSTEM_TYPE = 'System';
 const CRITICALITY_TYPE = 'Критичность';
@@ -34,7 +32,6 @@ const filterStatus = {
     isActive: false,
   },
 };
-
 
 const sources = require('./defects.json');
 
@@ -91,39 +88,19 @@ const updateCriticalityType = (type) => {
   }
 };
 
-const filterByCreationDate = () => {
-  sourcesCopy = sources.filter((item) => {
-    const currentDate = Date.parse(item[CREATING_DATE]);
-    return currentDate >= filterStatus.startDate && currentDate <= filterStatus.endDate;
-  });
-};
-
-const filterBySystemType = () => {
-  sourcesCopy = sources.filter((item) => {
-    return item[SYSTEM_TYPE] === filterStatus.systemType;
-  });
-};
-
-const filterByCriticalityType = () => {
-  sourcesCopy = sources.filter((item) => {
-    return item[CRITICALITY_TYPE] === filterStatus.criticalityType;
-  });
-};
-
 
 const filterSources = () => {
 
   sourcesCopy = sources.filter((item) => {
+    const currentDate = Date.parse(item[CREATING_DATE]);
 
     let condition1 = true;
     if (filterStatus.startDate.isActive) {
-      const currentDate = Date.parse(item[CREATING_DATE]);
       condition1 = currentDate >= filterStatus.startDate.value;
     };
 
     let condition2 = true;
-    if (filterStatus.startDate.isActive) {
-      const currentDate = Date.parse(item[CREATING_DATE]);
+    if (filterStatus.endDate.isActive) {
       condition2 = currentDate <= filterStatus.endDate.value;
     }
 
@@ -136,7 +113,6 @@ const filterSources = () => {
     if (filterStatus.criticalityType.isActive) {
       condition4 = item[CRITICALITY_TYPE] === filterStatus.criticalityType.value;
     }
-
 
     return condition1 && condition2 && condition3 && condition4;
 
