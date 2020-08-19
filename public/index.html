@@ -1,0 +1,30 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Systems Defects</title>
+  <style>
+    .filter-text-field {
+      border: 1px solid #000;
+      padding: 0.5em 1em;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="filters" id="chart-filters">
+    <input class="filter-text-field filters__filter-creation-start-date" type="text"
+      placeholder="Начальная дата создания">
+    <input class="filter-text-field filters__filter-creation-end-date" type="text" placeholder="Конечная дата создания">
+    <input class="filter-text-field filters__filter-system-type" type="text" placeholder="Тип системы">
+    <input class="filter-text-field filters__filter-criticality-type" type="text" placeholder="Критичность">
+  </section>
+
+  <div id='chartdiv'></div>
+
+  <script src="./bundle.js"></script>
+</body>
+
+</html>

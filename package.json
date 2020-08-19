@@ -1,0 +1,27 @@
+{
+  "name": "Systems-Defects",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Тестовое задание",
+  "scripts": {
+    "build": "webpack",
+    "eslint": "eslint src/**/*.js",
+    "start": "webpack-dev-server --open",
+    "test": "npm run eslint"
+  },
+  "devDependencies": {
+    "@amcharts/amcharts4": "4.9.35",
+    "@amcharts/amcharts4-fonts": "4.0.1",
+    "@amcharts/amcharts4-geodata": "4.1.17",
+    "eslint": "7.7.0",
+    "eslint-config-htmlacademy": "0.5.2",
+    "require.js": "1.0.0",
+    "webpack": "4.41.2",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.11.0"
+  },
+  "engines": {
+    "node": "10"
+  },
+  "dependencies": {}
+}
