@@ -4,5 +4,3 @@ import {drawTable} from './table.js';
 
 drawChart();
 drawTable();
-
-

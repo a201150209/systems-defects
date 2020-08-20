@@ -1,2 +1,2 @@
-const sources = require('./defects.json');
+const sources = require(`./defects.json`);
 export {sources};
