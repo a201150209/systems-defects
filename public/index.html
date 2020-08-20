@@ -16,13 +16,14 @@
       max-height: 500px;
     }
   </style>
+  <link href="../css/tabulator_simple.min.css" rel="stylesheet">
 </head>
 
 <body>
   <section class="filters" id="chart-filters">
     <h2>Фильтры для графика</h2>
     <p>Чтобы отфильтровать данные для графика введите:<br>
-      Дату в формате: 2016-07-18 00:00:00.0000000,<br>
+      Дату в формате: YYYY-MM-DD,<br>
       Тип системы: System1 или System2<br>
       Критичность: Низкий, Средний, Высокий
     </p>
@@ -34,7 +35,10 @@
   </section>
   <section class="chart" id="chart"></section>
 
-  <section class="table" id="source-table"></section>
+  <section class="table">
+    <h2>Таблица с исходными данными с возможностью фильтрации по всем полям</h2>
+    <div id="source-table"></div>
+  </section>
 
 
   <script src="./bundle.js"></script>
