@@ -1,20 +1,20 @@
-import * as am4core from '@amcharts/amcharts4/core';
-import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
 
 const CREATING_DATE = 'Дата создания';
 const SYSTEM_TYPE = 'System';
 const CRITICALITY_TYPE = 'Критичность';
 
-const filterClass = {
+const сlass = {
   startDate: 'filters__filter-creation-start-date',
   endDate: 'filters__filter-creation-end-date',
   systemType: 'filters__filter-system-type',
   criticalityType: 'filters__filter-criticality-type',
 };
 
-const filterStatus = {
+const status = {
   startDate: {
     value: 0,
     isActive: false,
@@ -33,113 +33,261 @@ const filterStatus = {
   },
 };
 
-const sources = require('./defects.json');
-
-let sourcesCopy = sources.slice();
-
-const test = {
-  "ID": 102,
-  "System": "System2",
-  "Summary": "just text",
-  "Состояние": "Закрыт",
-  "Найдено при": "SystemTest",
-  "Критичность": "Низкий",
-  "Тип Дефекта": "ПО",
-  "Дата создания": "2015-03-17 00:00:00.0000000",
-  "Дата изменения": "2017-01-12 19:56:14.0000000",
-  "Дата закрытия": "2015-04-22 00:00:00.0000000",
-  "Метод обнаружения": "Не назначен",
-  "reopens_amount": null
+const checker = {
+  isStartDate: (element) => {
+    return element.classList.contains(сlass.startDate);
+  },
+  isEndDate: (element) => {
+    return element.classList.contains(сlass.endDate);
+  },
+  isSystemType: (element) => {
+    return element.classList.contains(сlass.systemType);
+  },
+  isCriticalityType: (element) => {
+    return element.classList.contains(сlass.criticalityType);
+  }
 };
+
+const sources = require('./defects.json');
+let sourcesCopy = sources.slice();
+let issuesByMonth = [];
+
 
 const updateStartDate = (date) => {
   if (date) {
-    filterStatus.startDate.value = Date.parse(date);
-    filterStatus.startDate.isActive = true;
+    status.startDate.value = Date.parse(date);
+    status.startDate.isActive = true;
   } else {
-    filterStatus.startDate.isActive = false;
+    status.startDate.isActive = false;
   }
 };
 
 const updateEndDate = (date) => {
   if (date) {
-    filterStatus.endDate.value = Date.parse(date);
-    filterStatus.endDate.isActive = true;
+    status.endDate.value = Date.parse(date);
+    status.endDate.isActive = true;
   } else {
-    filterStatus.endDate.isActive = false;
+    status.endDate.isActive = false;
   }
 };
 
 const updateSystemType = (type) => {
   if (type) {
-    filterStatus.systemType.value = type;
-    filterStatus.systemType.isActive = true;
+    status.systemType.value = type;
+    status.systemType.isActive = true;
   } else {
-    filterStatus.systemType.isActive = false;
+    status.systemType.isActive = false;
   }
 };
 
 const updateCriticalityType = (type) => {
   if (type) {
-    filterStatus.criticalityType.value = type;
-    filterStatus.criticalityType.isActive = true;
+    status.criticalityType.value = type;
+    status.criticalityType.isActive = true;
   } else {
-    filterStatus.criticalityType.isActive = false;
+    status.criticalityType.isActive = false;
   }
 };
 
-
 const filterSources = () => {
-
   sourcesCopy = sources.filter((item) => {
     const currentDate = Date.parse(item[CREATING_DATE]);
 
     let condition1 = true;
-    if (filterStatus.startDate.isActive) {
-      condition1 = currentDate >= filterStatus.startDate.value;
+    if (status.startDate.isActive) {
+      condition1 = currentDate >= status.startDate.value;
     };
 
     let condition2 = true;
-    if (filterStatus.endDate.isActive) {
-      condition2 = currentDate <= filterStatus.endDate.value;
+    if (status.endDate.isActive) {
+      condition2 = currentDate <= status.endDate.value;
     }
 
     let condition3 = true;
-    if (filterStatus.systemType.isActive) {
-      condition3 = item[SYSTEM_TYPE] === filterStatus.systemType.value;
+    if (status.systemType.isActive) {
+      condition3 = item[SYSTEM_TYPE] === status.systemType.value;
     }
 
     let condition4 = true;
-    if (filterStatus.criticalityType.isActive) {
-      condition4 = item[CRITICALITY_TYPE] === filterStatus.criticalityType.value;
+    if (status.criticalityType.isActive) {
+      condition4 = item[CRITICALITY_TYPE] === status.criticalityType.value;
     }
 
     return condition1 && condition2 && condition3 && condition4;
 
   });
-  console.log(sourcesCopy);
-  console.log(filterStatus);
 };
 
-const checker = {
-  isStartDate: (element) => {
-    return element.classList.contains(filterClass.startDate);
-  },
-  isEndDate: (element) => {
-    return element.classList.contains(filterClass.endDate);
-  },
-  isSystemType: (element) => {
-    return element.classList.contains(filterClass.systemType);
-  },
-  isCriticalityType: (element) => {
-    return element.classList.contains(filterClass.criticalityType);
+const getTempIssuesByMonth = () => {
+  //временный объект добавлен для быстродействия, иначе пришлось бы запускать цикл в цикле
+  const tempData = {};
+  sourcesCopy.forEach((item) => {
+    const yearAndMonth = item[CREATING_DATE].substr(0, 7);
+    //tempChartData[yearAndMonth] - issue counter
+    if (!tempData[yearAndMonth]) {
+      tempData[yearAndMonth] = 0;
+    }
+    tempData[yearAndMonth]++;
+  });
+
+  return tempData;
+};
+
+const getIssuesByMonth = (temp) => {
+  const issuesByMonth = [];
+  for (var key in temp) {
+    if (temp.hasOwnProperty(key)) {
+      const year = Number(key.substr(0, 4));
+      const month = Number(key.substr(5, 7)) - 1;
+      const date = new Date(year, month);
+      const issue = temp[key];
+      issuesByMonth.push({
+        date,
+        issue
+      });
+    }
   }
+
+  issuesByMonth.sort((prev, next) => {
+    return prev.date - next.date;
+  });
+
+  return issuesByMonth;
 };
 
+const setIssuesByMonth = () => {
+  const tempData = getTempIssuesByMonth();
+  issuesByMonth = getIssuesByMonth(tempData);
+};
+
+const drawChart = () => {
+  /* Chart code */
+  // Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+  let chart = am4core.create('chart', am4charts.XYChart);
+  chart.data = issuesByMonth;
+
+  // Create axes
+  let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+  dateAxis.renderer.minGridDistance = 60;
+
+  let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+  // Create series
+  let series = chart.series.push(new am4charts.LineSeries());
+  series.dataFields.valueY = 'issue';
+  series.dataFields.dateX = 'date';
+  series.tooltipText = '{issue}';
+
+  series.tooltip.pointerOrientation = 'vertical';
+
+  chart.cursor = new am4charts.XYCursor();
+  chart.cursor.snapToSeries = series;
+  chart.cursor.xAxis = dateAxis;
+
+  //chart.scrollbarY = new am4core.Scrollbar();
+  chart.scrollbarX = new am4core.Scrollbar();
+
+};
+
+const drawTable = () => {
+  //custom max min header filter
+  var minMaxFilterEditor = function (cell, onRendered, success, cancel, editorParams) {
+
+    var end;
+
+    var container = document.createElement("span");
+
+    //create and style inputs
+    var start = document.createElement("input");
+    start.setAttribute("type", "number");
+    start.setAttribute("placeholder", "Min");
+    start.setAttribute("min", 0);
+    start.setAttribute("max", 100);
+    start.style.padding = "4px";
+    start.style.width = "50%";
+    start.style.boxSizing = "border-box";
+
+    start.value = cell.getValue();
+
+    function buildValues() {
+      success({
+        start: start.value,
+        end: end.value,
+      });
+    }
+
+    function keypress(e) {
+      if (e.keyCode == 13) {
+        buildValues();
+      }
+
+      if (e.keyCode == 27) {
+        cancel();
+      }
+    }
+
+    end = start.cloneNode();
+    end.setAttribute("placeholder", "Max");
+
+    start.addEventListener("change", buildValues);
+    start.addEventListener("blur", buildValues);
+    start.addEventListener("keydown", keypress);
+
+    end.addEventListener("change", buildValues);
+    end.addEventListener("blur", buildValues);
+    end.addEventListener("keydown", keypress);
+
+
+    container.appendChild(start);
+    container.appendChild(end);
+
+    return container;
+  }
+
+  //custom max min filter function
+  function minMaxFilterFunction(headerValue, rowValue, rowData, filterParams) {
+    //headerValue - the value of the header filter element
+    //rowValue - the value of the column in this row
+    //rowData - the data for the row being filtered
+    //filterParams - params object passed to the headerFilterFuncParams property
+
+    if (rowValue) {
+      if (headerValue.start != "") {
+        if (headerValue.end != "") {
+          return rowValue >= headerValue.start && rowValue <= headerValue.end;
+        } else {
+          return rowValue >= headerValue.start;
+        }
+      } else {
+        if (headerValue.end != "") {
+          return rowValue <= headerValue.end;
+        }
+      }
+    }
+
+    return true; //must return a boolean, true if it passes the filter.
+  }
+
+
+  var table = new Tabulator("#example-table", {
+    height: "311px",
+    layout: "fitColumns",
+    columns: [
+      {title: "Name", field: "name", width: 150, headerFilter: "input"},
+      {title: "Progress", field: "progress", width: 150, formatter: "progress", sorter: "number", headerFilter: minMaxFilterEditor, headerFilterFunc: minMaxFilterFunction, headerFilterLiveFilter: false},
+      {title: "Gender", field: "gender", editor: "select", editorParams: {values: {"male": "Male", "female": "Female"}}, headerFilter: true, headerFilterParams: {values: {"male": "Male", "female": "Female", "": ""}}},
+      {title: "Rating", field: "rating", editor: "star", hozAlign: "center", width: 100, headerFilter: "number", headerFilterPlaceholder: "at least...", headerFilterFunc: ">="},
+      {title: "Favourite Color", field: "col", editor: "input", headerFilter: "select", headerFilterParams: {values: true}},
+      {title: "Date Of Birth", field: "dob", hozAlign: "center", sorter: "date", headerFilter: "input"},
+      {title: "Driver", field: "car", hozAlign: "center", formatter: "tickCross", headerFilter: "tickCross", headerFilterParams: {"tristate": true}, headerFilterEmptyCheck: function (value) {return value === null}},
+    ],
+  });
+};
 
 const filtersElement = document.body.querySelector('#chart-filters');
 filtersElement.addEventListener('blur', (evt) => {
-
   if (checker.isStartDate(evt.target)) {
     updateStartDate(evt.target.value);
   } else if (checker.isEndDate(evt.target)) {
@@ -153,66 +301,11 @@ filtersElement.addEventListener('blur', (evt) => {
   }
 
   filterSources();
-
+  setIssuesByMonth();
+  drawChart();
 }, true);
 
 
+setIssuesByMonth();
+drawChart();
 
-/*
-am4core.useTheme(am4themes_animated);
-let chart = am4core.create('chartdiv', am4charts.XYChart);
-chart.hiddenState.properties.opacity = 0;
-chart.data = [
-  {
-    month: 'jan',
-    cases: 15,
-    system: 'sustem'
-  },
-  {
-    month: 'feb',
-    cases: 3,
-    system: 'sustem'
-  }
-];
-
-let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-categoryAxis.renderer.grid.template.location = 0;
-categoryAxis.dataFields.category = 'month';
-categoryAxis.renderer.minGridDistance = 40;
-categoryAxis.fontSize = 11;
-
-let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-valueAxis.min = 0;
-valueAxis.max = 15;
-valueAxis.strictMinMax = true;
-valueAxis.renderer.minGridDistance = 30;
-
-//axis break
-let axisBreak = valueAxis.axisBreaks.create();
-axisBreak.startValue = 0;
-axisBreak.endValue = 20;
-//axisBreak.breakSize = 0.005;
-
-// fixed axis break
-let d = (axisBreak.endValue - axisBreak.startValue) / (valueAxis.max - valueAxis.min);
-axisBreak.breakSize = 0.05 * (1 - d) / d; // 0.05 means that the break will take 5% of the total value axis height
-
-// make break expand on hover
-let hoverState = axisBreak.states.create('hover');
-hoverState.properties.breakSize = 1;
-hoverState.properties.opacity = 0.1;
-hoverState.transitionDuration = 1500;
-
-axisBreak.defaultState.transitionDuration = 1000;
-
-let series = chart.series.push(new am4charts.ColumnSeries());
-series.dataFields.categoryX = 'month';
-series.dataFields.valueY = 'cases';
-series.columns.template.tooltipText = '{valueY.value}';
-series.columns.template.tooltipY = 0;
-series.columns.template.strokeOpacity = 0;
-
-// as by default columns of the same series are of the same color, we add adapter which takes colors from chart.colors color set
-series.columns.template.adapter.add('fill', function (fill, target) {
-  return chart.colors.getIndex(target.dataItem.index);
-});*/

@@ -10,19 +10,32 @@
       padding: 0.5em 1em;
       margin-bottom: 1em;
     }
+
+    .chart {
+      max-width: 700px;
+      max-height: 500px;
+    }
   </style>
 </head>
 
 <body>
   <section class="filters" id="chart-filters">
+    <h2>Фильтры для графика</h2>
+    <p>Чтобы отфильтровать данные для графика введите:<br>
+      Дату в формате: 2016-07-18 00:00:00.0000000,<br>
+      Тип системы: System1 или System2<br>
+      Критичность: Низкий, Средний, Высокий
+    </p>
     <input class="filter-text-field filters__filter-creation-start-date" type="text"
       placeholder="Начальная дата создания">
     <input class="filter-text-field filters__filter-creation-end-date" type="text" placeholder="Конечная дата создания">
     <input class="filter-text-field filters__filter-system-type" type="text" placeholder="Тип системы">
     <input class="filter-text-field filters__filter-criticality-type" type="text" placeholder="Критичность">
   </section>
+  <section class="chart" id="chart"></section>
 
-  <div id='chartdiv'></div>
+  <section class="table" id="source-table"></section>
+
 
   <script src="./bundle.js"></script>
 </body>
