@@ -18,10 +18,14 @@ const Index = {
   MONTH_END: 7,
 };
 
+const datepickerElement = new Datepicker(`#${DATE_ID}`, {
+  inline: true,
+  ranged: true,
+  time: true
+});
 const systemTypeFilterElement = document.body.querySelector(`#${SYSTEM_TYPE_ID}`);
 const criticalityTypeFilterElement = document.body.querySelector(`#${CRITICALITY_TYPE_ID}`);
 const filterButtonElement = document.body.querySelector(`#${BUTTON_ID}`);
-
 
 const filterStatus = {
   startDate: {
@@ -54,7 +58,7 @@ const setFilterSelects = () => {
 };
 
 const updateDates = () => {
-  const selectedDates = datepicker.getDate();
+  const selectedDates = datepickerElement.getDate();
   const [startDate] = selectedDates;
   const endDate = selectedDates[selectedDates.length - 1];
 
@@ -142,7 +146,7 @@ const resetDefectsCount = () => {
 const setDefectsByMonth = () => {
   resetDefectsCount();
   const tempData = getTempDefectsByMonth();
-  for (var key in tempData) {
+  for (const key in tempData) {
     if (tempData.hasOwnProperty(key)) {
       const year = Number(key.substr(Index.YEAR_START, Index.YEAR_END));
       const month = Number(key.substr(Index.MONTH_START, Index.MONTH_END)) - MONTH_SHIFT;
@@ -159,12 +163,6 @@ const setDefectsByMonth = () => {
     return prev.date - next.date;
   });
 };
-
-const datepicker = new Datepicker(`#${DATE_ID}`, {
-  inline: true,
-  ranged: true,
-  time: true
-});
 
 
 filterButtonElement.addEventListener(`click`, () => {
