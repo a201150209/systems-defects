@@ -87,27 +87,27 @@ const filterSources = () => {
   sourcesCopy = sources.filter((item) => {
     const currentDate = Date.parse(item[CREATING_DATE_NAME]);
 
-    let startDate = true;
+    let isStartDate = true;
     if (filterStatus.startDate.isActive) {
-      startDate = currentDate >= filterStatus.startDate.value;
+      isStartDate = currentDate >= filterStatus.startDate.value;
     }
 
-    let endDate = true;
+    let isEndDate = true;
     if (filterStatus.endDate.isActive) {
-      endDate = currentDate <= filterStatus.endDate.value;
+      isEndDate = currentDate <= filterStatus.endDate.value;
     }
 
-    let systemType = true;
+    let isSystemType = true;
     if (filterStatus.systemType.isActive) {
-      systemType = item[SYSTEM_TYPE_NAME] === filterStatus.systemType.value;
+      isSystemType = item[SYSTEM_TYPE_NAME] === filterStatus.systemType.value;
     }
 
-    let criticalityType = true;
+    let isCriticalityType = true;
     if (filterStatus.criticalityType.isActive) {
-      criticalityType = item[CRITICALITY_TYPE_NAME] === filterStatus.criticalityType.value;
+      isCriticalityType = item[CRITICALITY_TYPE_NAME] === filterStatus.criticalityType.value;
     }
 
-    return startDate && endDate && systemType && criticalityType;
+    return isStartDate && isEndDate && isSystemType && isCriticalityType;
   });
 };
 
@@ -152,7 +152,7 @@ const setIssuesByMonth = () => {
   });
 };
 
-const drawChart = () => {
+const renderChart = () => {
   // сначала получаем данные
   setIssuesByMonth();
   console.log(issuesByMonth);
@@ -187,14 +187,14 @@ const drawChart = () => {
 
 };
 
-filterButtonElement.addEventListener(`click`, (evt) => {
+filterButtonElement.addEventListener(`click`, () => {
   updateStartDate();
   updateEndDate();
   updateSystemType();
   updateCriticalityType();
   filterSources();
   setIssuesByMonth();
-  drawChart();
+  renderChart();
 });
 
-export {drawChart};
+export {renderChart};

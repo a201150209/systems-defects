@@ -1,6 +1,6 @@
 import {sources} from './sources.js';
 
-const drawTable = () => {
+const renderTable = () => {
   var Tabulator = require('tabulator-tables');
   var table = new Tabulator('#source-table', {
     height: '311px',
@@ -23,4 +23,4 @@ const drawTable = () => {
   });
 };
 
-export {drawTable};
+export {renderTable};

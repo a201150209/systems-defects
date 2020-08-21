@@ -1,6 +1,6 @@
 
-import {drawChart} from './chart.js';
-import {drawTable} from './table.js';
+import {renderChart} from './chart.js';
+import {renderTable} from './table.js';
 
-drawChart();
-drawTable();
+renderChart();
+renderTable();
