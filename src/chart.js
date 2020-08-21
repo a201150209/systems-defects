@@ -45,7 +45,7 @@ const filterStatus = {
 };
 
 let sourcesCopy = sources.slice();
-const issuesByMonth = [];
+const defectsByMonth = [];
 
 const updateStartDate = () => {
   if (startDateFilterElement.value) {
@@ -113,11 +113,11 @@ const filterSources = () => {
 
 // временный объект добавлен для быстродействия, иначе пришлось бы запускать цикл в цикле
 // спорное решение, спросить как сделать лучше
-const getTempIssuesByMonth = () => {
+const getTempDefectsByMonth = () => {
   const tempData = {};
   sourcesCopy.forEach((item) => {
     const yearAndMonth = item[CREATING_DATE_NAME].substr(Index.YEAR_START, Index.MONTH_END);
-    // tempChartData[yearAndMonth] = issue counter
+    // tempChartData[yearAndMonth] = defects counter
     if (!tempData[yearAndMonth]) {
       tempData[yearAndMonth] = 0;
     }
@@ -127,42 +127,42 @@ const getTempIssuesByMonth = () => {
   return tempData;
 };
 
-const resetIssuesCount = () => {
-  issuesByMonth.length = 0;
+const resetDefectsCount = () => {
+  defectsByMonth.length = 0;
 };
 
-const setIssuesByMonth = () => {
-  resetIssuesCount();
-  const tempData = getTempIssuesByMonth();
+const setDefectsByMonth = () => {
+  resetDefectsCount();
+  const tempData = getTempDefectsByMonth();
   for (var key in tempData) {
     if (tempData.hasOwnProperty(key)) {
       const year = Number(key.substr(Index.YEAR_START, Index.YEAR_END));
       const month = Number(key.substr(Index.MONTH_START, Index.MONTH_END)) - MONTH_SHIFT;
       const date = new Date(year, month);
-      const issue = tempData[key];
-      issuesByMonth.push({
+      const defectsCount = tempData[key];
+      defectsByMonth.push({
         date,
-        issue
+        defectsCount
       });
     }
   }
 
-  issuesByMonth.sort((prev, next) => {
+  defectsByMonth.sort((prev, next) => {
     return prev.date - next.date;
   });
 };
 
 const renderChart = () => {
   // сначала получаем данные
-  setIssuesByMonth();
-  console.log(issuesByMonth);
+  setDefectsByMonth();
+  console.log(defectsByMonth);
 
   /* Chart code */
   // Themes begin
   am4core.useTheme(am4themes_animated);
   // Themes end
   let chart = am4core.create(`chart`, am4charts.XYChart);
-  chart.data = issuesByMonth;
+  chart.data = defectsByMonth;
 
   // Create axes
   let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -172,9 +172,9 @@ const renderChart = () => {
 
   // Create series
   let series = chart.series.push(new am4charts.LineSeries());
-  series.dataFields.valueY = `issue`;
+  series.dataFields.valueY = `defectsCount`;
   series.dataFields.dateX = `date`;
-  series.tooltipText = `{issue}`;
+  series.tooltipText = `{defectsCount}`;
 
   series.tooltip.pointerOrientation = `vertical`;
 
@@ -187,20 +187,22 @@ const renderChart = () => {
 
 };
 
+new Datepicker('#date-filter', {
+  inline: true,
+  ranged: true,
+  time: true
+});
+
 filterButtonElement.addEventListener(`click`, () => {
   updateStartDate();
   updateEndDate();
   updateSystemType();
   updateCriticalityType();
   filterSources();
-  setIssuesByMonth();
+  setDefectsByMonth();
   renderChart();
 });
 
-const ranged = new Datepicker('.filters__filter-creation-range-date', {
-  inline: true,
-  ranged: true,
-  time: true
-});
+
 
 export {renderChart};
