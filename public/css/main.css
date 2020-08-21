@@ -1,0 +1,50 @@
+ .filters-chart-wrapper {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .header--level2 {
+      text-align: center;
+      padding-bottom: 0.7em;
+    }
+
+    .header--level2:not(:first-child) {
+      padding-top: 3em;
+    }
+
+    .filter-fields {
+      display: flex;
+      justify-content: center;
+    }
+
+    .filter-field__field-label {
+      display: block;
+      padding-bottom: 1em;
+    }
+
+    .filter-fields__column {
+      background-color: #DAF7A6;
+      padding: 2em;
+    }
+
+    .filter-field {
+      border: 1px solid #000;
+      padding: 0.5em 1em;
+      margin-bottom: 1em;
+    }
+
+    .filter-field--select {
+      width: 100%;
+    }
+
+    .filter-field__field-wrapper--button {
+      margin-top: 2em;
+      text-align: center;
+    }
+
+    .chart {
+      max-width: 700px;
+      max-height: 500px;
+      width: 500px;
+    }

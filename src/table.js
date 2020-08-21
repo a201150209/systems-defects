@@ -5,6 +5,8 @@ const renderTable = () => {
   var table = new Tabulator('#source-table', {
     height: '311px',
     layout: 'fitColumns',
+    pagination: 'local',
+    paginationSize: 10,
     data: sources,
     columns: [
       {title: 'ID', field: 'ID', headerFilter: 'input'},

@@ -1,47 +1,52 @@
-<html lang="en">
+<html lang="ru">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Systems Defects</title>
-  <style>
-    .filter-text-field {
-      border: 1px solid #000;
-      padding: 0.5em 1em;
-      margin-bottom: 1em;
-    }
-
-    .chart {
-      max-width: 700px;
-      max-height: 500px;
-    }
-  </style>
+  <link href="./css/main.css" rel="stylesheet">
   <link href="./css/tabulator_simple.min.css" rel="stylesheet">
+  <link href="./css/datepicker.material.css" rel="stylesheet">
 </head>
 
 <body>
-  <section class="filters">
-    <h2>График с фильтрами</h2>
-    <p>Чтобы отфильтровать данные введите:<br>
-      Дату в формате: YYYY-MM-DD,<br>
-      Тип системы: System1, System2<br>
-      Критичность: Низкий, Средний, Высокий.
-    </p>
-    <p>Затем нажмите кнопку <b>Фильтровать</b></p>
-    <input class="filter-text-field filters__filter-creation-start-date" type="text"
-      placeholder="Начальная дата создания">
-    <input class="filter-text-field filters__filter-creation-end-date" type="text" placeholder="Конечная дата создания">
-    <input class="filter-text-field filters__filter-system-type" type="text" placeholder="Тип системы">
-    <input class="filter-text-field filters__filter-criticality-type" type="text" placeholder="Критичность">
-    <input class=" filters__filter-button" id="filter-button" type="button" value="Фильтровать">
-  </section>
-  <section class="chart" id="chart"></section>
+  <h2 class="header--level2">График с фильтрами</h2>
+  <div class="filters-chart-wrapper">
+    <section class="filters">
+      <div class="filter-fields">
+        <div class="filter-fields__column filter-fields__column--left">
+          <div class="filter-field__field-wrapper">
+            <label class="filter-field__field-label" for="system-type-filter">Выберите диапазон дат</label>
+            <input class="filter-field filters__filter-creation-range-date" type="hidden">
+          </div>
+        </div>
 
+        <div class="filter-fields__column filter-fields__column--right">
+          <div class="filter-field__field-wrapper">
+            <label class="filter-field__field-label" for="system-type-filter">Выберите тип системы</label>
+            <select class="filter-field filter-field--select filters__filter-system-type" id="system-type-filter"
+              name="system-type-filter"></select>
+          </div>
+          <div class="filter-field__field-wrapper">
+            <label class="filter-field__field-label" for="system-type-filter">Выберите критичность</label>
+            <select class="filter-field filter-field--select filters__filter-criticality-type"
+              id="criticality-type-filter" name="system-type-filter"></select>
+          </div>
+          <div class="filter-field__field-wrapper filter-field__field-wrapper--button">
+            <input class="filter-button filters__filter-button" id="filter-button" type="button" value="Фильтровать">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chart" id="chart"></section>
+  </div>
+  <h2 class="header--level2">Таблица с исходными данными с возможностью фильтрации по всем полям</h2>
   <section class="table">
-    <h2>Таблица с исходными данными с возможностью фильтрации по всем полям</h2>
     <div id="source-table"></div>
   </section>
 
+  <script src="./datepicker.js"></script>
   <script src="./bundle.js"></script>
 </body>
 

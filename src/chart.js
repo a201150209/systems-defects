@@ -197,4 +197,10 @@ filterButtonElement.addEventListener(`click`, () => {
   renderChart();
 });
 
+const ranged = new Datepicker('.filters__filter-creation-range-date', {
+  inline: true,
+  ranged: true,
+  time: true
+});
+
 export {renderChart};
