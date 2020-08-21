@@ -25,12 +25,16 @@
           <div class="filter-field__field-wrapper">
             <label class="filter-field__field-label" for="system-type-filter">Выберите тип системы</label>
             <select class="filter-field filter-field--select filters__filter-system-type" id="system-type-filter"
-              name="system-type-filter"></select>
+              name="system-type-filter">
+              <option selected value="">Все</option>
+            </select>
           </div>
           <div class="filter-field__field-wrapper">
             <label class="filter-field__field-label" for="criticality-type-filter">Выберите критичность</label>
             <select class="filter-field filter-field--select filters__filter-criticality-type"
-              id="criticality-type-filter" name="system-type-filter"></select>
+              id="criticality-type-filter" name="criticality-type-filter">
+              <option selected value="">Все</option>
+            </select>
           </div>
           <div class="filter-field__field-wrapper filter-field__field-wrapper--button">
             <input class="filter-button filters__filter-button" id="filter-button" type="button" value="Фильтровать">

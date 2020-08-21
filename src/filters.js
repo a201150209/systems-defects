@@ -1,13 +1,15 @@
 
 import {sources} from './sources.js';
+import {renderChart} from './chart.js';
+import {getValuesFromArrayObjects, createOptions} from './utils.js';
 
 const CREATING_DATE_NAME = `Дата создания`;
 const SYSTEM_TYPE_NAME = `System`;
 const CRITICALITY_TYPE_NAME = `Критичность`;
-const START_DATE_CLASS = `filters__filter-creation-start-date`;
-const END_DATE_CLASS = `filters__filter-creation-end-date`;
-const SYSTEM_TYPE_CLASS = `filters__filter-system-type`;
-const CRITICALITY_TYPE_CLASS = `filters__filter-criticality-type`;
+const SYSTEM_TYPE_ID = `system-type-filter`;
+const CRITICALITY_TYPE_ID = `criticality-type-filter`;
+const BUTTON_ID = `filter-button`;
+const DATE_ID = `date-filter`;
 const MONTH_SHIFT = 1;
 const Index = {
   YEAR_START: 0,
@@ -16,11 +18,10 @@ const Index = {
   MONTH_END: 7,
 };
 
-const startDateFilterElement = document.body.querySelector(`.${START_DATE_CLASS}`);
-const endDateFilterElement = document.body.querySelector(`.${END_DATE_CLASS}`);
-const systemTypeFilterElement = document.body.querySelector(`.${SYSTEM_TYPE_CLASS}`);
-const criticalityTypeFilterElement = document.body.querySelector(`.${CRITICALITY_TYPE_CLASS}`);
-const filterButtonElement = document.body.querySelector(`#filter-button`);
+const systemTypeFilterElement = document.body.querySelector(`#${SYSTEM_TYPE_ID}`);
+const criticalityTypeFilterElement = document.body.querySelector(`#${CRITICALITY_TYPE_ID}`);
+const filterButtonElement = document.body.querySelector(`#${BUTTON_ID}`);
+
 
 const filterStatus = {
   startDate: {
@@ -44,18 +45,28 @@ const filterStatus = {
 let sourcesCopy = sources.slice();
 const defectsByMonth = [];
 
-const updateStartDate = () => {
-  if (startDateFilterElement.value) {
-    filterStatus.startDate.value = Date.parse(startDateFilterElement.value);
+
+const setFilterSelects = () => {
+  const systemTypes = getValuesFromArrayObjects(sources, SYSTEM_TYPE_NAME);
+  const criticalityTypes = getValuesFromArrayObjects(sources, CRITICALITY_TYPE_NAME);
+  createOptions(systemTypeFilterElement, systemTypes);
+  createOptions(criticalityTypeFilterElement, criticalityTypes);
+};
+
+const updateDates = () => {
+  const selectedDates = datepicker.getDate();
+  const [startDate] = selectedDates;
+  const endDate = selectedDates[selectedDates.length - 1];
+
+  if (startDate) {
+    filterStatus.startDate.value = startDate;
     filterStatus.startDate.isActive = true;
   } else {
     filterStatus.startDate.isActive = false;
   }
-};
 
-const updateEndDate = () => {
-  if (endDateFilterElement.value) {
-    filterStatus.endDate.value = Date.parse(endDateFilterElement.value);
+  if (endDate) {
+    filterStatus.endDate.value = endDate;
     filterStatus.endDate.isActive = true;
   } else {
     filterStatus.endDate.isActive = false;
@@ -149,20 +160,22 @@ const setDefectsByMonth = () => {
   });
 };
 
-new Datepicker('#date-filter', {
+const datepicker = new Datepicker(`#${DATE_ID}`, {
   inline: true,
   ranged: true,
   time: true
 });
 
+
 filterButtonElement.addEventListener(`click`, () => {
-  updateStartDate();
-  updateEndDate();
+  updateDates();
   updateSystemType();
   updateCriticalityType();
   filterSources();
   setDefectsByMonth();
   renderChart();
 });
+
+setFilterSelects();
 
 export {setDefectsByMonth, defectsByMonth};
