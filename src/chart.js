@@ -1,7 +1,7 @@
-import * as am4core from '@amcharts/amcharts4/core';
-import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-import {defectsByMonth} from './filters.js';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import { getDefectsByMonth } from "./filters.js";
 
 const renderChart = () => {
   /* Chart code */
@@ -9,7 +9,7 @@ const renderChart = () => {
   am4core.useTheme(am4themes_animated);
   // Themes end
   let chart = am4core.create(`chart`, am4charts.XYChart);
-  chart.data = defectsByMonth;
+  chart.data = getDefectsByMonth();
 
   // Create axes
   let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -31,7 +31,6 @@ const renderChart = () => {
 
   // chart.scrollbarY = new am4core.Scrollbar();
   chart.scrollbarX = new am4core.Scrollbar();
-
 };
 
-export {renderChart};
+export { renderChart };

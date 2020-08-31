@@ -1,7 +1,6 @@
-
-import {sources} from './sources.js';
-import {renderChart} from './chart.js';
-import {getValuesFromArrayObjects, createOptions} from './utils.js';
+import { sources } from "./sources.js";
+import { renderChart } from "./chart.js";
+import { getValuesFromArrayObjects, createOptions } from "./utils.js";
 
 const CREATING_DATE_NAME = `Дата создания`;
 const SYSTEM_TYPE_NAME = `System`;
@@ -10,21 +9,24 @@ const SYSTEM_TYPE_ID = `system-type-filter`;
 const CRITICALITY_TYPE_ID = `criticality-type-filter`;
 const BUTTON_ID = `filter-button`;
 const DATE_ID = `date-filter`;
-const MONTH_SHIFT = 1;
+const START_DEFECTS_COUNT = 1;
 const Index = {
   YEAR_START: 0,
-  YEAR_END: 4,
-  MONTH_START: 5,
   MONTH_END: 7,
 };
 
 const datepickerElement = new Datepicker(`#${DATE_ID}`, {
   inline: true,
   ranged: true,
-  time: true
+  time: true,
 });
-const systemTypeFilterElement = document.body.querySelector(`#${SYSTEM_TYPE_ID}`);
-const criticalityTypeFilterElement = document.body.querySelector(`#${CRITICALITY_TYPE_ID}`);
+
+const systemTypeFilterElement = document.body.querySelector(
+  `#${SYSTEM_TYPE_ID}`
+);
+const criticalityTypeFilterElement = document.body.querySelector(
+  `#${CRITICALITY_TYPE_ID}`
+);
 const filterButtonElement = document.body.querySelector(`#${BUTTON_ID}`);
 
 const filterStatus = {
@@ -46,13 +48,12 @@ const filterStatus = {
   },
 };
 
-let sourcesCopy = sources.slice();
-const defectsByMonth = [];
-
-
 const setFilterSelects = () => {
   const systemTypes = getValuesFromArrayObjects(sources, SYSTEM_TYPE_NAME);
-  const criticalityTypes = getValuesFromArrayObjects(sources, CRITICALITY_TYPE_NAME);
+  const criticalityTypes = getValuesFromArrayObjects(
+    sources,
+    CRITICALITY_TYPE_NAME
+  );
   createOptions(systemTypeFilterElement, systemTypes);
   createOptions(criticalityTypeFilterElement, criticalityTypes);
 };
@@ -96,7 +97,7 @@ const updateCriticalityType = () => {
 };
 
 const filterSources = () => {
-  sourcesCopy = sources.filter((item) => {
+  return sources.filter((item) => {
     const currentDate = Date.parse(item[CREATING_DATE_NAME]);
 
     let isStartDate = true;
@@ -116,64 +117,50 @@ const filterSources = () => {
 
     let isCriticalityType = true;
     if (filterStatus.criticalityType.isActive) {
-      isCriticalityType = item[CRITICALITY_TYPE_NAME] === filterStatus.criticalityType.value;
+      isCriticalityType =
+        item[CRITICALITY_TYPE_NAME] === filterStatus.criticalityType.value;
     }
 
     return isStartDate && isEndDate && isSystemType && isCriticalityType;
   });
 };
 
-// временный объект добавлен для быстродействия, иначе пришлось бы запускать цикл в цикле
-// спорное решение, спросить как сделать лучше
-const getTempDefectsByMonth = () => {
-  const tempData = {};
-  sourcesCopy.forEach((item) => {
-    const yearAndMonth = item[CREATING_DATE_NAME].substr(Index.YEAR_START, Index.MONTH_END);
-    // tempChartData[yearAndMonth] = defects counter
-    if (!tempData[yearAndMonth]) {
-      tempData[yearAndMonth] = 0;
-    }
-    tempData[yearAndMonth]++;
-  });
+const getDefectsByMonth = () => {
+  const filteredSources = filterSources();
+  const defectsByMonth = filteredSources.reduce((sum, item) => {
+    const monthAndYear = new Date(
+      item[CREATING_DATE_NAME].substr(Index.YEAR_START, Index.MONTH_END)
+    );
+    const monthAndYearInResult = sum.find((it) => {
+      return Number(it.date) === Number(monthAndYear);
+      //Оказывается, что даже если два объекта даты полностью одинаковы, то сравнить их так нельзя - это два разных объекта, а то, что в них находится одинаковая дата не имеет значения
+    });
 
-  return tempData;
-};
-
-const resetDefectsCount = () => {
-  defectsByMonth.length = 0;
-};
-
-const setDefectsByMonth = () => {
-  resetDefectsCount();
-  const tempData = getTempDefectsByMonth();
-  for (const key in tempData) {
-    if (tempData.hasOwnProperty(key)) {
-      const year = Number(key.substr(Index.YEAR_START, Index.YEAR_END));
-      const month = Number(key.substr(Index.MONTH_START, Index.MONTH_END)) - MONTH_SHIFT;
-      const date = new Date(year, month);
-      const defectsCount = tempData[key];
-      defectsByMonth.push({
-        date,
-        defectsCount
+    if (monthAndYearInResult) {
+      monthAndYearInResult.defectsCount++;
+    } else {
+      sum.push({
+        date: monthAndYear,
+        defectsCount: START_DEFECTS_COUNT,
       });
     }
-  }
+    return sum;
+  }, []);
 
   defectsByMonth.sort((prev, next) => {
     return prev.date - next.date;
   });
-};
 
+  return defectsByMonth;
+};
 
 filterButtonElement.addEventListener(`click`, () => {
   updateDates();
   updateSystemType();
   updateCriticalityType();
-  filterSources();
-  setDefectsByMonth();
   renderChart();
 });
 
 setFilterSelects();
 
-export {setDefectsByMonth, defectsByMonth};
+export { getDefectsByMonth };
